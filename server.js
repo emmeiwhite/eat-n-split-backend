@@ -3,6 +3,7 @@ config()
 import express from 'express'
 
 import connectDB from './config/db.js'
+import authRoutes from './routes/authRoutes.js'
 
 const app = express()
 
@@ -10,6 +11,12 @@ const PORT = process.env.PORT || 5000
 
 // connect to DB
 connectDB()
+
+// Body Parser Middleware
+app.use(express.json())
+
+// Hook AuthRoute
+app.use('/api/auth', authRoutes)
 
 // Test Route
 app.get('/', (req, res) => {
