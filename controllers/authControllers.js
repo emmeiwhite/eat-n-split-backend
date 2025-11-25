@@ -10,11 +10,15 @@ export const registerUser = async (req, res) => {
       return res.status(400).json({ message: 'Please provide all fields' })
     }
 
-    //   2. Check if email already exists
+    // 2. Check if email already exists
     const existingUser = await User.findOne({ email })
     if (existingUser) {
       return res.status(400).json({ message: 'User already exists' })
     }
+
+    // 3. Hash Password
+    const salt = await bcrypt.genSalt(10)
+    const hashedPassword = await bcrypt.hash(password, salt)
 
     res.status(200).json({ message: 'Register endpoint hit' })
   } catch (error) {
