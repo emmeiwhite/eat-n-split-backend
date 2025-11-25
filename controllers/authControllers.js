@@ -20,7 +20,22 @@ export const registerUser = async (req, res) => {
     const salt = await bcrypt.genSalt(10)
     const hashedPassword = await bcrypt.hash(password, salt)
 
-    res.status(200).json({ message: 'Register endpoint hit' })
+    // 4. Create User --- Query DB
+    const newUser = await User.create({
+      name,
+      email,
+      password: hashedPassword
+    })
+
+    //  5. Respond
+    res.status(201).json({
+      message: 'User registered successfully',
+      user: {
+        _id: newuser._id,
+        name: newUser.name,
+        email: newUser.email
+      }
+    })
   } catch (error) {
     res.status(500).json({ message: 'Server error' })
   }
@@ -34,5 +49,3 @@ export async function loginUser(req, res) {
     res.status(500).json({ message: 'Server error' })
   }
 }
-
-// We are not writing any logic yet — just scaffolding.
