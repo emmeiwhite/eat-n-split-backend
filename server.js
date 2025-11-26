@@ -1,6 +1,8 @@
 import { config } from 'dotenv'
 config()
 import express from 'express'
+import cookieParser from 'cookie-parser'
+import session from 'express-session'
 
 import connectDB from './config/db.js'
 import authRoutes from './routes/authRoutes.js'
@@ -14,6 +16,21 @@ connectDB()
 
 // Body Parser Middleware
 app.use(express.json())
+app.use(cookieParser())
+
+// ⭐ Session Setup (OLD AMAZON STYLE)
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET, // keep in env
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: true, // JS cannot access cookie
+      maxAge: 1000 * 60 * 60 * 24, // 1 day
+      secure: false // true only in production with HTTPS
+    }
+  })
+)
 
 // Hook AuthRoute
 app.use('/api/auth', authRoutes)
