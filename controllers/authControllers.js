@@ -52,10 +52,25 @@ export async function loginUser(req, res) {
 
     // 2. Check whether email exists --- Query Database
 
-    const userExist = await User.findOne({ email })
-    if (!userExist) {
+    const user = await User.findOne({ email }).select('+password')
+    if (!user) {
       return res.status(400).json({ message: 'User does not exist' })
     }
+
+    // 3. Compare the hashedPassword with the password provided
+    const isPasswordCorrect = await bcrypt.compare(password, user.password)
+    if (!isPasswordCorrect) {
+      return res.status(400).json({ message: 'Password is incorrect!' })
+    }
+
+    // 4 Remove password before sending user back
+    user.password = undefined
+
+    // 5. Respond
+    return res.status(200).json({
+      message: 'Login successful',
+      user
+    })
   } catch (error) {
     res.status(500).json({ message: 'Server error' })
   }
