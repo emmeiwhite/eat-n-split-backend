@@ -42,9 +42,20 @@ export const registerUser = async (req, res) => {
 }
 
 export async function loginUser(req, res) {
-  // Business logic Here for user login
   try {
-    res.status(200).json({ message: 'Login endpoint hit' })
+    // 1. Validate Payload
+    const { email, password } = req.body
+
+    if (!email || !password) {
+      res.status(400).json({ message: 'Provide email and password' })
+    }
+
+    // 2. Check whether email exists --- Query Database
+
+    const userExist = await User.findOne({ email })
+    if (!userExist) {
+      return res.status(400).json({ message: 'User does not exist' })
+    }
   } catch (error) {
     res.status(500).json({ message: 'Server error' })
   }
