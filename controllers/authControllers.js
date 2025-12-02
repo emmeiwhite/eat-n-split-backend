@@ -64,7 +64,8 @@ export async function loginUser(req, res) {
     }
 
     // ⭐ Create a session (old-school auth)
-    req.session.userId = user._id // I need to look into why user._id has been used here
+    req.session.userId = user._id
+    /** The above line of code is basically used to maintain session. Internally express-session handles it all. Ultimately connect.sid is returned to the FE for the Browser to save it in cookie. And store user details in the global state */
 
     /** session.userId is a temporary id, and it is not the same as user._id, sessionID is totally different from the user._id */
     // 4 Remove password before sending user back
