@@ -86,6 +86,24 @@ export async function loginUser(req, res) {
 
 export async function logoutUser(req, res) {
   try {
-    const { email } = req.body
-  } catch (error) {}
+    // 1. Destroy session
+    req.session.destroy(err => {
+      if (err) {
+        console.log('Session destruction error:', err)
+        return res.status(500).json({ message: 'Logout failed' })
+      }
+
+      // 2. Clear the session cookie
+      res.clearCookie('connect.sid', {
+        httpOnly: true,
+        sameSite: 'none',
+        secure: true
+      })
+
+      return res.status(200).json({ message: 'Logged out successfully' })
+    })
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ message: 'Server error during logout' })
+  }
 }
