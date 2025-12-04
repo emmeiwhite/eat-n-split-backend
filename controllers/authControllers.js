@@ -107,3 +107,13 @@ export async function logoutUser(req, res) {
     res.status(500).json({ message: 'Server error during logout' })
   }
 }
+
+// CRUD: For Admin Dashboard
+export async function getAllUsers(req, res) {
+  try {
+    const users = await User.find().select('-password') // ensure password is not returned
+    res.status(200).json({ users })
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching users' })
+  }
+}
